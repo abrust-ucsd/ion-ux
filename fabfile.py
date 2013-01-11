@@ -46,23 +46,23 @@ class Deploy:
     def deploy_cilogon(self):
         print("Executing on %s as %s" % (env.host, env.user))
         # Remove/recreate web app extract and install dirs
-        run('sudo rm -rf %s' % self.remote_extract_dir)
+        run('rm -rf %s' % self.remote_extract_dir)
         with settings(warn_only=True):
             run('mkdir %s' % self.remote_extract_dir)
         with settings(warn_only=True):
-            sudo('rm -rf %s' % self.remote_deploy_dir, shell=False)
+            run('rm -rf %s' % self.remote_deploy_dir, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir %s' % self.remote_deploy_dir, shell=False)
+            run('mkdir %s' % self.remote_deploy_dir, shell=False)
 
 
         put('cilogon.tar', '%s/cilogon.tar' % self.remote_extract_dir)
-        sudo('tar -xf %s/cilogon.tar -C %s' % (self.remote_extract_dir, self.remote_deploy_dir), shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp/data' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp/lookup' % self.remote_deploy_dir, shell=False)
-        sudo('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chown -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chmod -R 777 %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
+        run('tar -xf %s/cilogon.tar -C %s' % (self.remote_extract_dir, self.remote_deploy_dir), shell=False)
+        run('mkdir %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/cilogon-wsgi/temp/data' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/cilogon-wsgi/temp/lookup' % self.remote_deploy_dir, shell=False)
+        #run('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
+        #run('chown -R root %s' % self.remote_deploy_dir, shell=False)
+        #run('chmod -R 777 %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
 
     def config_flask(self):
         # Create config.py file from template
@@ -99,18 +99,18 @@ class Deploy:
             run('mkdir  %s' % self.remote_extract_dir)
         # Remove/recreate deploy and flask dir
         with settings(warn_only=True):
-            sudo('rm -rf %s' % flask_root, shell=False)
+            run('rm -rf %s' % flask_root, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir  %s' % self.remote_deploy_dir, shell=False)
+            run('mkdir  %s' % self.remote_deploy_dir, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir  %s' % flask_root, shell=False)
+            run('mkdir  %s' % flask_root, shell=False)
         # Deploy
         put('ux.tar', '%s/ux.tar' % self.remote_extract_dir)
-        sudo('tar -xf %s/ux.tar -C %s' % (self.remote_extract_dir, flask_root), shell=False)
-        sudo('mkdir %s/public' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/logs' % self.remote_deploy_dir, shell=False)
-        sudo('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chown -R root %s' % self.remote_deploy_dir, shell=False)
+        run('tar -xf %s/ux.tar -C %s' % (self.remote_extract_dir, flask_root), shell=False)
+        run('mkdir %s/public' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/logs' % self.remote_deploy_dir, shell=False)
+        #run('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
+        #run('chown -R root %s' % self.remote_deploy_dir, shell=False)
 
     def deploy(self, ssh_user, web_host, web_port=3000, remote_extract_dir='/tmp/ux', remote_deploy_dir='/www/ux', remote_relative_flask_dir='flask',
                gateway_host='sg.a.oceanobservatories.org', gateway_port=5000, secret_key=None):
@@ -126,7 +126,7 @@ class Deploy:
 
         self.local_dir = "."
         self.clone_dir = join(self.local_dir, 'tmp_clone')
-        self.git_project_url = 'git@github.com:ooici/ion-ux.git'
+        self.git_project_url = 'http://github.com/ooici/ion-ux.git'
 
         global env
         env.host_string= web_host
@@ -196,7 +196,7 @@ def gateway_sg():
 def deploy():
     global host, gateway_host
     web_host = host or prompt('Web application hostname: ', default='ux-test.oceanobservatories.org')
-    ssh_user = prompt('Username for remote host: ', default=getpass.getuser())
+    ssh_user = prompt('Username for remote host: ', default='ux')
     gateway_host= gateway_host or prompt('Service Gateway Service hostname: ', default='sg.a.oceanobservatories.org')
     deploy = Deploy()
 
