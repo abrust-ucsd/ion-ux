@@ -126,7 +126,7 @@ class Deploy:
 
         self.local_dir = "."
         self.clone_dir = join(self.local_dir, 'tmp_clone')
-        self.git_project_url = 'http://github.com/ooici/ion-ux.git'
+        self.git_project_url = 'https://github.com/ooici/ion-ux.git'
 
         global env
         env.host_string= web_host
@@ -187,7 +187,7 @@ def ux_test():
 
 def ux_stage():
     global host
-    host = 'r2-ux-stage.oceanobservatories.org'
+    host = 'ion-beta.oceanobservatories.org'
 
 def gateway_sg():
     global gateway_host;
